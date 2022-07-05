@@ -15,16 +15,29 @@ ws_linear = usdt_perpetual.WebSocket(
 
 def queryAllSymbols():
     symbol_list = []
+    removed = ["BTCUSDT", "USDCUSDT"]
     symbols = session_unauth.query_symbol()
     for item in symbols['result']:
-        symbol_list.append(item['name'])
-    return symbol_list
+        if item['name'] in removed:
+            continue
+        elif item['name'][-4:] == "USDT":
+            symbol_list.append(item['name'])
+
+    return symbol_list, handle_message(symbol_list)
+
 
 def handle_message(msg):
     print(msg)
 
 
+def liquidations():
+    return
 
+
+def index_weights():
+    return
+
+queryAllSymbols()
 
 while True:
     sleep(1)
