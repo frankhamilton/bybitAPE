@@ -1,16 +1,15 @@
 from time import sleep
-from pybit import usdt_perpetual
+from pybit import inverse_perpetual, usdt_perpetual
 
-
-session_unauth = usdt_perpetual.HTTP(
-    endpoint="https://api.bybit.com")
-
-ws_linear = usdt_perpetual.WebSocket(
+ws_inverseP = inverse_perpetual.WebSocket(
     test=False,
     ping_interval=30,  # the default is 30
     ping_timeout=10,  # the default is 10
     domain="bybit"  # the default is "bybit"
 )
+
+session_unauth = usdt_perpetual.HTTP(
+    endpoint="https://api.bybit.com")
 
 
 def queryAllSymbols():
@@ -23,22 +22,32 @@ def queryAllSymbols():
         elif item['name'][-4:] == "USDT":
             symbol_list.append(item['name'])
 
-    return symbol_list, handle_message(symbol_list)
+    return symbol_list
+
+
+def liquidations():
+    ws_inverseP.liquidation_stream(
+        handle_liquidations, "BTCUSD"
+    )
+
+
+def BTCUSD_kline():
+    ws_inverseP.kline_stream(
+        handle_message, "BTCUSD", "5"
+    )
 
 
 def handle_message(msg):
     print(msg)
 
 
-def liquidations():
-    return
+def handle_liquidations(msg):
+    print(msg)
 
 
 def index_weights():
     return
 
-queryAllSymbols()
 
 while True:
     sleep(1)
-
